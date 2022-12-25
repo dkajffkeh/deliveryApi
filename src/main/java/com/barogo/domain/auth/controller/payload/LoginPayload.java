@@ -54,7 +54,6 @@ public class LoginPayload {
                 .withClaim(jwtProperties.getClaim().getId(),this.id)
                 .sign(Algorithm.HMAC512(jwtProperties.getAlgorithm()));
 
-        response.addHeader(jwtProperties.getCoreHeader(),jwtProperties.getHeaderTypeWithBlankSpace()+accessToken);
     }
 
 }

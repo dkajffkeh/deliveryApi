@@ -42,7 +42,10 @@ public class UserService {
     }
 
     public LoginPayload loginSuccessHandler(HttpServletRequest request, HttpServletResponse response) {
-        return new LoginPayload(jwtProperties,request,response);
+        LoginPayload loginPayload = new LoginPayload(jwtProperties,request,response);
+        response.addHeader(jwtProperties.getCoreHeader(),
+                jwtProperties.getHeaderTypeWithBlankSpace()+loginPayload.getAccessToken());
+        return loginPayload;
     }
 
     public LoginPayload loginFailHandler(HttpServletRequest request){
