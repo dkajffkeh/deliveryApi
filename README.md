@@ -102,14 +102,15 @@ java -jar ./target/barogo-0.0.1-SNAPSHOT.jar
 
 * `Response Parameters and Body`
 
-| Element     | Data Type | Parent | Description |
-|:------------|:---------:|:-------|:------------|
-| tokenType   |  String   |        | 토큰 유형       |
-| accessToken |  String   |        | 토큰          |
-| failMessage |  String   |        | 로그인 실패 메세지  |
-| username    |  String   |        | 고객실명        |
-| userId      |  String   |        | 고객 로그인 아이디  |
-| id          |   Long    |        | 아이디 시퀀스     |
+| Element       | Data Type | Parent | Description |
+|:--------------|:---------:|:-------|:------------|
+| Authorization |  Header   |        | 토큰          |
+| tokenType     |  String   |        | 토큰 유형       |
+| accessToken   |  String   |        | 토큰          |
+| failMessage   |  String   |        | 로그인 실패 메세지  |
+| username      |  String   |        | 고객실명        |
+| userId        |  String   |        | 고객 로그인 아이디  |
+| id            |   Long    |        | 아이디 시퀀스     |
 
 
 

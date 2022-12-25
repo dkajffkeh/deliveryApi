@@ -1,5 +1,6 @@
 package com.barogo.common.security;
 
+import com.barogo.common.code.ResultCode;
 import com.barogo.common.payload.response.ResponseData;
 import com.barogo.domain.auth.controller.payload.AuthFailPayload;
 import com.google.gson.Gson;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import static com.barogo.common.utils.HttpServletRequestUtils.MESSAGE_KEY;
+import static com.barogo.common.utils.HttpServletRequestUtils.RESULT_CODE_KEY;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 @Component
@@ -34,7 +36,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         AuthFailPayload authFailPayload = new AuthFailPayload((String)request.getAttribute(MESSAGE_KEY));
 
-        ResponseData<AuthFailPayload> payload = ResponseData.success(authFailPayload);
+        ResultCode resultCode = (ResultCode) request.getAttribute(RESULT_CODE_KEY);
+
+        ResponseData<AuthFailPayload> payload = ResponseData.success(resultCode,authFailPayload);
 
         Gson gson = new Gson();
         PrintWriter out = response.getWriter();

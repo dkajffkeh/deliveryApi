@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @PostMapping("/token")
-    public ResponseData<LoginPayload> successLogin(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseData<LoginPayload> loginSuccessHandler(HttpServletRequest request, HttpServletResponse response) {
         return ResponseData.success(userService.loginSuccessHandler(request,response));
     }
 
