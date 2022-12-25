@@ -7,6 +7,8 @@ import lombok.*;
 import org.springframework.util.ObjectUtils;
 
 import static com.barogo.common.code.ResultCode.*;
+import static com.barogo.common.regex.GlobalRegExContainer.hasBlank;
+import static com.barogo.common.regex.GlobalRegExContainer.hasSpecialChar;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Getter
@@ -26,6 +28,8 @@ public class LoginRequestPayload {
     }
 
     public void checkPropertiesCondition(String userId,String password) {
+        if(hasBlank(userId)) throw new ApiServerException(RESULT_4017);
+        if(hasSpecialChar(userId)) throw new ApiServerException(RESULT_4018);
         if(isEmpty(userId)) throw new ApiServerException(RESULT_4010);
         if(isEmpty(password)) throw new ApiServerException(RESULT_4011);
     }

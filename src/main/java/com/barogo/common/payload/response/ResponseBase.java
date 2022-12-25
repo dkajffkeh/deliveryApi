@@ -11,13 +11,12 @@ import static com.barogo.common.utils.DateTimeUtils.convertLocalDateTimeToString
 @Getter
 public class ResponseBase {
 
-    private final ResultCode resultCode;
+    private final String resultCode;
 
     private final String systemDt = convertLocalDateTimeToString(LocalDateTime.now());
 
-    public ResponseBase(ResultCode resultCode) {
+    public ResponseBase(String resultCode) {
         this.resultCode = resultCode;
     }
 
-    public String getResultCode() {return resultCode.getResultCode();}
 }

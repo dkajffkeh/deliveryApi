@@ -24,6 +24,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final BarogoAuthProvider barogoAuthProvider;
 
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
     private static final String [] AUTH_WHITELIST = {
             "/webjars/**",
             "/h2-console/**",
@@ -54,6 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated();
 
+        http.exceptionHandling()
+                .authenticationEntryPoint(customAuthenticationEntryPoint);
     }
 
     @Bean

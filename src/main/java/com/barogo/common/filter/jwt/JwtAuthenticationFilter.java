@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.barogo.common.code.ResultCode.RESULT_4000;
+import static com.barogo.common.utils.HttpServletRequestUtils.*;
 
 // username
 // password 인증처리 Filter
@@ -57,6 +58,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         } catch (IOException e) {
             e.printStackTrace();
             throw new ApiServerException(RESULT_4000);
+        } catch (ApiServerException e) {
+            buildRequestErrorMsg(request,e);
+            throw e;
         }
     }
 
@@ -78,4 +82,5 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         request.getRequestDispatcher("/users/token").forward(request,response);
     }
+
 }

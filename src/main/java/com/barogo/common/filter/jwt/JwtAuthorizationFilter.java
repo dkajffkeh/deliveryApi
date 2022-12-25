@@ -1,6 +1,7 @@
 package com.barogo.common.filter.jwt;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.barogo.common.exception.ApiServerException;
 import com.barogo.common.properties.JwtProperties;
 import com.barogo.domain.auth.PrincipalUserDetails;
 import com.barogo.domain.auth.User;
@@ -13,13 +14,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.barogo.common.code.ResultCode.RESULT_4016;
+import static com.barogo.common.utils.HttpServletRequestUtils.buildRequestErrorMsg;
 import static com.barogo.common.utils.jwt.JwtClaimUtil.extractClaimByKey;
 import static com.barogo.common.utils.jwt.JwtClaimUtil.extractDecodedToken;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -52,8 +54,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         if(hasToken(jwtHeader)){
 
             String token = extractToken(jwtHeader);
+            DecodedJWT decodedToken;
 
-            DecodedJWT decodedToken = extractDecodedToken(token,jwtProperties);
+            try {
+                decodedToken = extractDecodedToken(token,jwtProperties);
+            } catch (ApiServerException e) {
+                buildRequestErrorMsg(request,e);
+                throw e;
+            }
 
             if(isValidToken(decodedToken)){
 
@@ -61,14 +69,19 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
                 User userEntity = userRepository.findFirstByUserId(userId);
 
-                // Jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어준다.
-                PrincipalUserDetails principalDetails = new PrincipalUserDetails(userEntity);
+            if(isEmpty(userEntity)) {
+                buildRequestErrorMsg(request,new ApiServerException(RESULT_4016));
+                throw new ApiServerException(RESULT_4016);
+            }
+                    // Jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어준다.
+            PrincipalUserDetails principalDetails = new PrincipalUserDetails(userEntity);
 
-                // 비밀번호는 null 을 설정함 현재는 로그인 요청이 아님 username 이 null 이 아니기 때문에 정상적 서명이 이뤄졌다는것으로 간주함.
-                // 서명이 정상일 경우 Authentication 객체를 만들어준다.
-                Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails,null, principalDetails.getAuthorities());
+            // 비밀번호는 null 을 설정함 현재는 로그인 요청이 아님 username 이 null 이 아니기 때문에 정상적 서명이 이뤄졌다는것으로 간주함.
+            // 서명이 정상일 경우 Authentication 객체를 만들어준다.
+            Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails,null, principalDetails.getAuthorities());
 
-                SecurityContextHolder.getContext().setAuthentication(authentication); // -> 강제로 시큐리티 세션에 접근하여 authentication 객체를 저장함
+            SecurityContextHolder.getContext().setAuthentication(authentication); // -> 강제로 시큐리티 세션에 접근하여 authentication 객체를 저장함
+
 
             }
         }
@@ -85,6 +98,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private boolean isValidToken(DecodedJWT decodedToken){
+        if(isEmpty(decodedToken)) return false;
         return decodedToken.getSubject().equals(jwtProperties.getSubject());
     }
 

@@ -1,4 +1,4 @@
-package com.barogo.domain.order.application;
+package com.barogo.order;
 
 import com.barogo.common.exception.ApiServerException;
 import com.barogo.domain.order.Order;

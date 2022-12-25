@@ -16,7 +16,7 @@ public class ResponseData<T> extends ResponseBase {
     }
 
     public ResponseData(ResultCode code, T resultData) {
-        super(code);
+        super(code.getResultCode());
         this.resultData = resultData;
         this.resultMessage = code.getResultMessage();
     }

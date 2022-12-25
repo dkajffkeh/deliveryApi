@@ -1,4 +1,4 @@
-package com.barogo.domain.auth;
+package com.barogo.auth;
 
 import com.barogo.domain.auth.controller.parameter.signup.SignUpParameter;
 import org.junit.jupiter.api.*;

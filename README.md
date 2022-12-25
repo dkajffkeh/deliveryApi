@@ -8,12 +8,10 @@ Database : `H2`
 
 실행 명령어 : 
 ```bash
-cd {application dir}
+cd {application pom.xml dir}
 mvn clean package
 java -jar ./target/barogo-0.0.1-SNAPSHOT.jar
 ```
-
-<a id="api_list"></a>
 
 ### 1. RESTFul API List
 
@@ -249,6 +247,9 @@ Method : POST
 
 Authorization Type : Bearer Token
 Token Key : Authorization
-form : Bearer {header}.{payload}.{signature}
+ValueForm : Bearer {header}.{payload}.{signature}
 
 ```
+
+***Postman Api Collection Path***
+> {application pom.xml dir}/api_collection

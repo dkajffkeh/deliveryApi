@@ -1,7 +1,8 @@
-package com.barogo.domain.auth.controller;
+package com.barogo.auth;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.barogo.common.code.ResultCode;
+import com.barogo.common.exception.ApiServerException;
 import com.barogo.common.properties.JwtProperties;
 import com.barogo.domain.auth.controller.parameter.signup.SignUpParameter;
 import com.barogo.domain.auth.repository.UserRepository;
@@ -19,12 +20,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
+import java.util.UUID;
 
-import static com.barogo.common.code.ResultCode.RESULT_1006;
-import static com.barogo.common.code.ResultCode.RESULT_1007;
+import static com.barogo.common.code.ResultCode.*;
 import static com.barogo.common.utils.jwt.JwtClaimUtil.extractClaimByKey;
 import static com.barogo.common.utils.jwt.JwtClaimUtil.extractDecodedToken;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,12 +35,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
-class UserControllerTest {
+class UserAuthTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    private static final Logger log = LoggerFactory.getLogger(UserControllerTest.class);
+    private static final Logger log = LoggerFactory.getLogger(UserAuthTest.class);
 
     private static final SignUpParameter TEST_PARAM =
             new SignUpParameter("barogo12345","A1234#gase12","홍길동");
@@ -115,6 +117,64 @@ class UserControllerTest {
 
         Assertions.assertNotNull(token);
         assertEquals(username,"홍길동");
+    }
+
+    @Test
+    @DisplayName("로그인 아이디 누락 케이스")
+    void loginMissingUserId() {
+        assertThrows(ApiServerException.class, () -> {
+            mockMvc.perform(post("/login")
+                    .content(objectMapper.writeValueAsString(
+                            new SignUpParameter("","A1234#gase12","홍길동")))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+        });
+    }
+
+    @Test
+    @DisplayName("비밀번호 누락 케이스")
+    void pwdMissingUserId() {
+        assertThrows(ApiServerException.class, () -> {
+            mockMvc.perform(post("/login")
+                    .content(objectMapper.writeValueAsString(
+                            new SignUpParameter("barogo123456","","홍길동")))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+        });
+    }
+
+    @Test
+    @DisplayName("변조된 토큰 인입 테스트")
+    void hackedTokenInit() throws Exception {
+        String invalidData = UUID.randomUUID().toString();
+
+        MvcResult loginResult = mockMvc.perform(post("/login")
+                        .content(objectMapper.writeValueAsString(TEST_PARAM))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(forwardedUrl("/users/token"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        HttpServletRequest request = loginResult.getRequest();
+
+        MvcResult forwardedLoginResult = mockMvc.perform(post(Objects.requireNonNull(loginResult.getResponse().getForwardedUrl()))
+                        .requestAttr(jwtProperties.getClaim().getId(), request.getAttribute(jwtProperties.getClaim().getId()))
+                        .requestAttr(jwtProperties.getClaim().getUsername(), request.getAttribute(jwtProperties.getClaim().getUsername())
+                        )).andDo(print())
+                .andReturn();
+
+        HttpServletResponse redirectedResponse = forwardedLoginResult.getResponse();
+
+        // token 받아옴.
+        String token = redirectedResponse.getHeader(jwtProperties.getCoreHeader());
+        token = extractToken(token);
+        String invalidToken = token + invalidData;
+        assertThrows(ApiServerException.class, () -> {
+            extractDecodedToken(invalidToken,jwtProperties);
+        });
+
     }
 
     @Test
