@@ -5,6 +5,7 @@ import com.barogo.domain.order.application.OrderService;
 import com.barogo.domain.order.controller.parameter.AddressModifyRequestParam;
 import com.barogo.domain.order.controller.parameter.OrderListRequestParam;
 import com.barogo.domain.order.controller.payload.OrderDetailPayload;
+import com.barogo.domain.order.controller.payload.OrderSearchHistoryPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ResponseData<List<OrderDetailPayload>> getOrders(
+    public ResponseData<OrderSearchHistoryPayload> getOrders(
             @RequestBody
             @Validated OrderListRequestParam orderListRequestParam) {
         return ResponseData.success(orderService.getOrderList(orderListRequestParam));

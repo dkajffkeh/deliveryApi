@@ -1,10 +1,10 @@
 package com.barogo.domain.auth.controller;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.barogo.common.code.ResultCode;
 import com.barogo.common.properties.JwtProperties;
 import com.barogo.domain.auth.controller.parameter.signup.SignUpParameter;
 import com.barogo.domain.auth.repository.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
@@ -15,12 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
 
 import static com.barogo.common.code.ResultCode.RESULT_1006;
@@ -137,8 +134,9 @@ class UserControllerTest {
                 .andReturn();
 
         HttpServletRequest request = loginResult.getRequest();
+        ResultCode resultCode = (ResultCode) request.getAttribute("resultCode");
 
-        assertEquals(request.getAttribute("resultCode"),RESULT_1007.getResultCode());
+        assertEquals(resultCode.getResultCode(),RESULT_1007.getResultCode());
         assertEquals(request.getAttribute("message"),RESULT_1007.getResultMessage());
 
     }
@@ -160,8 +158,9 @@ class UserControllerTest {
                 .andReturn();
 
         HttpServletRequest request = loginResult.getRequest();
+        ResultCode resultCode = (ResultCode) request.getAttribute("resultCode");
 
-        assertEquals(request.getAttribute("resultCode"),RESULT_1006.getResultCode());
+        assertEquals(resultCode.getResultCode(),RESULT_1006.getResultCode());
         assertEquals(request.getAttribute("message"),RESULT_1006.getResultMessage());
 
     }

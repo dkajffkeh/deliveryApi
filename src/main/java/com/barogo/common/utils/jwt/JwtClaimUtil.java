@@ -25,7 +25,7 @@ public class JwtClaimUtil {
                 .verify(token);
         } catch (TokenExpiredException exception){
             log.info("[TOKEN EXPIRED] {}", exception.getMessage());
-            throw new ApiServerException(ResultCode.RESULT_4001);
+            return null;
         }
     }
 }

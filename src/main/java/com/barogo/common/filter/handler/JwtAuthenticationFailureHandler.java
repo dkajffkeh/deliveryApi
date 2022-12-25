@@ -23,12 +23,12 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
         if(exception instanceof UsernameNotFoundException){
-            request.setAttribute("resultCode", RESULT_1006.getResultCode());
+            request.setAttribute("resultCode", RESULT_1006);
             request.setAttribute("message",RESULT_1006.getResultMessage());
         }
 
         if(exception instanceof BadCredentialsException) {
-            request.setAttribute("resultCode", RESULT_1007.getResultCode());
+            request.setAttribute("resultCode", RESULT_1007);
             request.setAttribute("message",RESULT_1007.getResultMessage());
         }
 

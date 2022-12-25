@@ -10,14 +10,15 @@ public enum ResultCode {
 
     // 토큰 인증오류
     RESULT_4000("4000","잘못 된 요청입니다.", HttpStatus.BAD_REQUEST),
-    RESULT_4001("4001", "인증 시간이 만료되었습니다.",HttpStatus.UNAUTHORIZED),
-
+    RESULT_4012("4012", "인증정보 에러",HttpStatus.UNAUTHORIZED),
     RESULT_4003("4003", "비밀번호가 일치하지 않습니다.",HttpStatus.UNAUTHORIZED),
 
     RESULT_4009("4009","이미 존재하는 사용자입니다.",HttpStatus.CONFLICT),
 
     RESULT_4010("4010","userId 값이 누락되었습니다.",HttpStatus.BAD_REQUEST),
     RESULT_4011("4011","password 값이 누락되었습니다.",HttpStatus.BAD_REQUEST),
+
+    RESULT_4014("4013", "인증정보가 만료되었습니다.",HttpStatus.UNAUTHORIZED),
 
     // 회원 검증오류
     RESULT_1001("1001","비밀번호는 공백 미포함, 영문 대문자, 소문자, 숫자, 특수문자 중 최소 3가지 이상 포함 12자 이상이여야합니다.(사용가능 특수문자 : ~₩!@#/\\[\\]$%^&*()_+)"),

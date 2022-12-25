@@ -31,6 +31,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private final UserRepository userRepository;
     private final JwtProperties jwtProperties;
 
+    private static final String TOKEN_EXPIRED_MSG = "토근 유효시간이 만료되었습니다.";
+
+    private static final String TOKEN_USER_NOT_VALID_MSG = "토큰서명에 명시되어있는 사용자 정보가 더이상 유효하지 않습니다.";
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager,
                                   UserRepository userRepository,
@@ -52,14 +55,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
             DecodedJWT decodedToken = extractDecodedToken(token,jwtProperties);
 
-            // 정상 서명
             if(isValidToken(decodedToken)){
 
                 String userId = extractClaimByKey(decodedToken,jwtProperties.getClaim().getUserId());
 
                 User userEntity = userRepository.findFirstByUserId(userId);
 
-                if(isEmpty(userEntity)) authorizationFailHandler(request);
                 // Jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어준다.
                 PrincipalUserDetails principalDetails = new PrincipalUserDetails(userEntity);
 
@@ -87,7 +88,4 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         return decodedToken.getSubject().equals(jwtProperties.getSubject());
     }
 
-    private void authorizationFailHandler(HttpServletRequest request) {
-
-    }
 }

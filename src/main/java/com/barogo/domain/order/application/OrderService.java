@@ -6,6 +6,7 @@ import com.barogo.domain.order.Order;
 import com.barogo.domain.order.controller.parameter.AddressModifyRequestParam;
 import com.barogo.domain.order.controller.parameter.OrderListRequestParam;
 import com.barogo.domain.order.controller.payload.OrderDetailPayload;
+import com.barogo.domain.order.controller.payload.OrderSearchHistoryPayload;
 import com.barogo.domain.order.repository.CustomOrderQueryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class OrderService {
 
     private final CustomOrderQueryRepository customOrderQueryRepository;
 
-    public List<OrderDetailPayload> getOrderList(OrderListRequestParam orderListRequestParam) {
+    public OrderSearchHistoryPayload getOrderList(OrderListRequestParam orderListRequestParam) {
         orderListRequestParam.validateRequestedDate();
 
         List<Order> orders = customOrderQueryRepository.findAllByUserIdFetch(
@@ -34,7 +35,7 @@ public class OrderService {
                 orderListRequestParam.convertedToTimeGet()
                 );
 
-        return buildDetailPayloadsByOrder(orders);
+        return new OrderSearchHistoryPayload(buildDetailPayloadsByOrder(orders));
     }
 
     @Transactional
