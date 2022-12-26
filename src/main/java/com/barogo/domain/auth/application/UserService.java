@@ -43,8 +43,7 @@ public class UserService {
 
     public LoginPayload loginSuccessHandler(HttpServletRequest request, HttpServletResponse response) {
         LoginPayload loginPayload = new LoginPayload(jwtProperties,request,response);
-        response.addHeader(jwtProperties.getCoreHeader(),
-                jwtProperties.getHeaderTypeWithBlankSpace()+loginPayload.getAccessToken());
+        response.addHeader(jwtProperties.getCoreHeader(), loginPayload.getAccessToken());
         return loginPayload;
     }
 
