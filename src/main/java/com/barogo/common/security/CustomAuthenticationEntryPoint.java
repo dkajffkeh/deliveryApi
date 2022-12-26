@@ -16,9 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static com.barogo.common.code.ResultCode.RESULT_4012;
 import static com.barogo.common.utils.HttpServletRequestUtils.MESSAGE_KEY;
 import static com.barogo.common.utils.HttpServletRequestUtils.RESULT_CODE_KEY;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Component
 @Slf4j
@@ -38,11 +40,17 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         ResultCode resultCode = (ResultCode) request.getAttribute(RESULT_CODE_KEY);
 
+        if(isEmpty(resultCode)) resultCode = setDefaultAccessDeniedCode();
+
         ResponseData<AuthFailPayload> payload = ResponseData.success(resultCode,authFailPayload);
 
         Gson gson = new Gson();
         PrintWriter out = response.getWriter();
         out.print(gson.toJson(payload));
 
+    }
+
+    private ResultCode setDefaultAccessDeniedCode() {
+        return RESULT_4012;
     }
 }

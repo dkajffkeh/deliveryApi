@@ -10,7 +10,7 @@ public enum ResultCode {
 
     // 토큰 인증오류
     RESULT_4000("4000","잘못 된 요청입니다.", HttpStatus.BAD_REQUEST),
-    RESULT_4012("4012", "인증정보 에러",HttpStatus.UNAUTHORIZED),
+    RESULT_4012("4012", "인증정보가 누럭되었거나 인가되지 않은 인증정보입니다.",HttpStatus.UNAUTHORIZED),
     RESULT_4003("4003", "비밀번호가 일치하지 않습니다.",HttpStatus.UNAUTHORIZED),
 
     RESULT_4009("4009","이미 존재하는 사용자입니다.",HttpStatus.CONFLICT),
